@@ -1,7 +1,13 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-const productsList = [
+const productsList:  {
+  id: Number,
+  name: String,
+  description: String,
+  price: Number,
+  isFavorite?: Boolean
+}[] = [
   {
     id: 1,
     name: 'Post 1',
@@ -24,14 +30,20 @@ const productsList = [
 
 export const useProductStore = defineStore('post', () => {
   const products = ref(productsList)
-  const favorites = ref([])
-  const getPosts = computed(() => products.value)
-  const getFavorites = computed(() => favorites.value)
+  const getFavorites = computed(() => products.value.filter(el => el.isFavorite))
   function removeFromFavorites(id: number) {
-    favorites.value = favorites.value.filter(el => (el === id))
+    products.value.forEach(el => {
+      if (el.id === id) {
+        el.isFavorite = false
+      }
+    })
   }
   function addToFavorites(id: number) {
-    favorites.value.push(id)
+    products.value.forEach(el => {
+      if (el.id === id) {
+        el.isFavorite = true
+      }
+    })
   }
 
   return { products, getFavorites, removeFromFavorites, addToFavorites }
